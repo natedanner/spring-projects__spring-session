@@ -44,7 +44,7 @@ abstract class OncePerRequestFilter implements Filter {
 	 */
 	public static final String ALREADY_FILTERED_SUFFIX = ".FILTERED";
 
-	private String alreadyFilteredAttributeName = getClass().getName().concat(ALREADY_FILTERED_SUFFIX);
+	private final String alreadyFilteredAttributeName = getClass().getName().concat(ALREADY_FILTERED_SUFFIX);
 
 	/**
 	 * This {@code doFilter} implementation stores a request attribute for "already

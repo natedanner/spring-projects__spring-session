@@ -18,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 public class GitHubMilestoneApiTests {
 	private GitHubMilestoneApi github;
 
-	private RepositoryRef repositoryRef = RepositoryRef.owner("spring-projects").repository("spring-security").build();
+	private final RepositoryRef repositoryRef = RepositoryRef.owner("spring-projects").repository("spring-security").build();
 
 	private MockWebServer server;
 

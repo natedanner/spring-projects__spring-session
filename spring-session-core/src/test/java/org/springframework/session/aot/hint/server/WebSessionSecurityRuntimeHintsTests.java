@@ -75,7 +75,7 @@ class WebSessionSecurityRuntimeHintsTests {
 		boolean match = SpringFactoriesLoader.forResourceLocation("META-INF/spring/aot.factories")
 			.load(RuntimeHintsRegistrar.class)
 			.stream()
-			.anyMatch((registrar) -> registrar instanceof WebSessionSecurityRuntimeHints);
+			.anyMatch(WebSessionSecurityRuntimeHints.class::isInstance);
 		assertThat(match).isTrue();
 	}
 

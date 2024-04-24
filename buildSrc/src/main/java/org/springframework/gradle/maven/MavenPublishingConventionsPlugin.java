@@ -39,7 +39,7 @@ public class MavenPublishingConventionsPlugin implements Plugin<Project> {
 			public void execute(MavenPublishPlugin mavenPublish) {
 				PublishingExtension publishing = project.getExtensions().getByType(PublishingExtension.class);
 				publishing.getPublications().withType(MavenPublication.class)
-						.all((mavenPublication) -> MavenPublishingConventionsPlugin.this.customizePom(mavenPublication.getPom(), project));
+						.all(mavenPublication -> MavenPublishingConventionsPlugin.this.customizePom(mavenPublication.getPom(), project));
 				MavenPublishingConventionsPlugin.this.customizeJavaPlugin(project);
 			}
 		});
@@ -62,14 +62,14 @@ public class MavenPublishingConventionsPlugin implements Plugin<Project> {
 	}
 
 	private void customizeLicences(MavenPomLicenseSpec licences) {
-		licences.license((licence) -> {
+		licences.license(licence -> {
 			licence.getName().set("Apache License, Version 2.0");
 			licence.getUrl().set("https://www.apache.org/licenses/LICENSE-2.0");
 		});
 	}
 
 	private void customizeDevelopers(MavenPomDeveloperSpec developers) {
-		developers.developer((developer) -> {
+		developers.developer(developer -> {
 			developer.getName().set("Pivotal");
 			developer.getEmail().set("info@pivotal.io");
 			developer.getOrganization().set("Pivotal Software, Inc.");
@@ -89,7 +89,7 @@ public class MavenPublishingConventionsPlugin implements Plugin<Project> {
 	}
 
 	private void customizeJavaPlugin(Project project) {
-		project.getPlugins().withType(JavaPlugin.class).all((javaPlugin) -> {
+		project.getPlugins().withType(JavaPlugin.class).all(javaPlugin -> {
 			JavaPluginExtension extension = project.getExtensions().getByType(JavaPluginExtension.class);
 			extension.withJavadocJar();
 			extension.withSourcesJar();

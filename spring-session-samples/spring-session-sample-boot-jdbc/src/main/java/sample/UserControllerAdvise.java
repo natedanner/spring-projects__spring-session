@@ -31,7 +31,7 @@ public class UserControllerAdvise {
 
 	@ModelAttribute("currentUserName")
 	String currentUser(Principal principal) {
-		return (principal != null) ? principal.getName() : null;
+		return principal != null ? principal.getName() : null;
 	}
 
 }

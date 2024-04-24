@@ -92,7 +92,7 @@ public class RedisWebSessionConfiguration implements BeanClassLoaderAware, Embed
 		sessionRepository.setSaveMode(this.saveMode);
 		sessionRepository.setSessionIdGenerator(this.sessionIdGenerator);
 		this.sessionRepositoryCustomizers
-			.forEach((sessionRepositoryCustomizer) -> sessionRepositoryCustomizer.customize(sessionRepository));
+			.forEach(sessionRepositoryCustomizer -> sessionRepositoryCustomizer.customize(sessionRepository));
 		return sessionRepository;
 	}
 
@@ -165,7 +165,7 @@ public class RedisWebSessionConfiguration implements BeanClassLoaderAware, Embed
 
 	private ReactiveRedisTemplate<String, Object> createReactiveRedisTemplate() {
 		RedisSerializer<String> keySerializer = RedisSerializer.string();
-		RedisSerializer<Object> defaultSerializer = (this.defaultRedisSerializer != null) ? this.defaultRedisSerializer
+		RedisSerializer<Object> defaultSerializer = this.defaultRedisSerializer != null ? this.defaultRedisSerializer
 				: new JdkSerializationRedisSerializer(this.classLoader);
 		RedisSerializationContext<String, Object> serializationContext = RedisSerializationContext
 			.<String, Object>newSerializationContext(defaultSerializer)

@@ -131,7 +131,7 @@ public class ReactiveRedisSessionRepository
 		return Mono.fromSupplier(() -> this.sessionIdGenerator.generate())
 				.subscribeOn(Schedulers.boundedElastic())
 				.publishOn(Schedulers.parallel())
-				.map((sessionId) -> {
+				.map(sessionId -> {
 					MapSession cached = new MapSession(sessionId);
 					cached.setMaxInactiveInterval(this.defaultMaxInactiveInterval);
 					return new RedisSession(cached, true);
@@ -146,7 +146,7 @@ public class ReactiveRedisSessionRepository
 		}
 		String sessionKey = getSessionKey(session.hasChangedSessionId() ? session.originalSessionId : session.getId());
 		return this.sessionRedisOperations.hasKey(sessionKey)
-			.flatMap((exists) -> exists ? session.save()
+			.flatMap(exists -> exists ? session.save()
 					: Mono.error(new IllegalStateException("Session was invalidated")));
 	}
 
@@ -156,11 +156,11 @@ public class ReactiveRedisSessionRepository
 
 		// @formatter:off
 		return this.sessionRedisOperations.opsForHash().entries(sessionKey)
-				.collectMap((e) -> e.getKey().toString(), Map.Entry::getValue)
-				.filter((map) -> !map.isEmpty())
-				.flatMap((map) -> this.redisSessionMapper.apply(id, map))
-				.filter((session) -> !session.isExpired())
-				.map((session) -> new RedisSession(session, false))
+				.collectMap(e -> e.getKey().toString(), Map.Entry::getValue)
+				.filter(map -> !map.isEmpty())
+				.flatMap(map -> this.redisSessionMapper.apply(id, map))
+				.filter(session -> !session.isExpired())
+				.map(session -> new RedisSession(session, false))
 				.switchIfEmpty(Mono.defer(() -> deleteById(id).then(Mono.empty())));
 		// @formatter:on
 	}
@@ -227,7 +227,7 @@ public class ReactiveRedisSessionRepository
 				this.delta.put(RedisSessionMapper.LAST_ACCESSED_TIME_KEY, cached.getLastAccessedTime().toEpochMilli());
 			}
 			if (this.isNew || (ReactiveRedisSessionRepository.this.saveMode == SaveMode.ALWAYS)) {
-				getAttributeNames().forEach((attributeName) -> this.delta.put(getAttributeKey(attributeName),
+				getAttributeNames().forEach(attributeName -> this.delta.put(getAttributeKey(attributeName),
 						cached.getAttribute(attributeName)));
 			}
 		}
@@ -308,7 +308,7 @@ public class ReactiveRedisSessionRepository
 		}
 
 		private Mono<Void> save() {
-			return Mono.defer(() -> saveChangeSessionId().then(saveDelta()).doOnSuccess((aVoid) -> this.isNew = false));
+			return Mono.defer(() -> saveChangeSessionId().then(saveDelta()).doOnSuccess(aVoid -> this.isNew = false));
 		}
 
 		private Mono<Void> saveDelta() {
@@ -328,11 +328,11 @@ public class ReactiveRedisSessionRepository
 				setTtl = ReactiveRedisSessionRepository.this.sessionRedisOperations.persist(sessionKey);
 			}
 
-			Mono<Object> clearDelta = Mono.fromDirect((s) -> {
+			Mono<Object> clearDelta = Mono.fromDirect(s -> {
 				this.delta.clear();
 				s.onComplete();
 			});
-			return update.flatMap((unused) -> setTtl).flatMap((unused) -> clearDelta).then();
+			return update.flatMap(unused -> setTtl).flatMap(unused -> clearDelta).then();
 		}
 
 		private Mono<Void> saveChangeSessionId() {
@@ -342,7 +342,7 @@ public class ReactiveRedisSessionRepository
 
 			String sessionId = getId();
 
-			Publisher<Void> replaceSessionId = (s) -> {
+			Publisher<Void> replaceSessionId = s -> {
 				this.originalSessionId = sessionId;
 				s.onComplete();
 			};
@@ -355,11 +355,11 @@ public class ReactiveRedisSessionRepository
 				String sessionKey = getSessionKey(sessionId);
 
 				return ReactiveRedisSessionRepository.this.sessionRedisOperations.rename(originalSessionKey, sessionKey)
-					.flatMap((unused) -> Mono.fromDirect(replaceSessionId))
-					.onErrorResume((ex) -> {
+					.flatMap(unused -> Mono.fromDirect(replaceSessionId))
+					.onErrorResume(ex -> {
 						String message = NestedExceptionUtils.getMostSpecificCause(ex).getMessage();
 						return StringUtils.startsWithIgnoreCase(message, "ERR no such key");
-					}, (ex) -> Mono.empty());
+					}, ex -> Mono.empty());
 			}
 		}
 

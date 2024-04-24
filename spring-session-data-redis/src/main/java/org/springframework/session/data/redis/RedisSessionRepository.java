@@ -214,7 +214,7 @@ public class RedisSessionRepository implements SessionRepository<RedisSessionRep
 				this.delta.put(RedisSessionMapper.LAST_ACCESSED_TIME_KEY, cached.getLastAccessedTime().toEpochMilli());
 			}
 			if (this.isNew || (RedisSessionRepository.this.saveMode == SaveMode.ALWAYS)) {
-				getAttributeNames().forEach((attributeName) -> this.delta.put(getAttributeKey(attributeName),
+				getAttributeNames().forEach(attributeName -> this.delta.put(getAttributeKey(attributeName),
 						cached.getAttribute(attributeName)));
 			}
 		}

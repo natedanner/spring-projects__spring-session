@@ -33,7 +33,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class HomePage {
 
-	private WebDriver driver;
+	private final WebDriver driver;
 
 	@FindBy(css = "form")
 	WebElement form;

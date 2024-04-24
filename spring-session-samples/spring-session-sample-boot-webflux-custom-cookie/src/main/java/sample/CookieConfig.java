@@ -32,8 +32,8 @@ public class CookieConfig {
 	public WebSessionIdResolver webSessionIdResolver() {
 		CookieWebSessionIdResolver resolver = new CookieWebSessionIdResolver();
 		resolver.setCookieName("JSESSIONID"); // <1>
-		resolver.addCookieInitializer((builder) -> builder.path("/")); // <2>
-		resolver.addCookieInitializer((builder) -> builder.sameSite("Strict")); // <3>
+		resolver.addCookieInitializer(builder -> builder.path("/")); // <2>
+		resolver.addCookieInitializer(builder -> builder.sameSite("Strict")); // <3>
 		return resolver;
 	}
 	// end::webflux-cookie-serializer[]

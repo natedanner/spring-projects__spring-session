@@ -46,7 +46,7 @@ public abstract class SingleIndexResolver<S extends Session> implements IndexRes
 
 	public final Map<String, String> resolveIndexesFor(S session) {
 		String indexValue = resolveIndexValueFor(session);
-		return (indexValue != null) ? Collections.singletonMap(this.indexName, indexValue) : Collections.emptyMap();
+		return indexValue != null ? Collections.singletonMap(this.indexName, indexValue) : Collections.emptyMap();
 	}
 
 }

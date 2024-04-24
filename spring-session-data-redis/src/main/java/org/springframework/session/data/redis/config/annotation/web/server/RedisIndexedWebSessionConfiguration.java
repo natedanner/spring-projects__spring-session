@@ -97,7 +97,7 @@ public class RedisIndexedWebSessionConfiguration
 		sessionRepository.setSaveMode(getSaveMode());
 		sessionRepository.setSessionIdGenerator(getSessionIdGenerator());
 		if (getSessionRepositoryCustomizers() != null) {
-			getSessionRepositoryCustomizers().forEach((customizer) -> customizer.customize(sessionRepository));
+			getSessionRepositoryCustomizers().forEach(customizer -> customizer.customize(sessionRepository));
 		}
 		return sessionRepository;
 	}

@@ -98,7 +98,7 @@ public class DefaultCookieSerializer implements CookieSerializer {
 		if (cookies != null) {
 			for (Cookie cookie : cookies) {
 				if (this.cookieName.equals(cookie.getName())) {
-					String sessionId = (this.useBase64Encoding ? base64Decode(cookie.getValue()) : cookie.getValue());
+					String sessionId = this.useBase64Encoding ? base64Decode(cookie.getValue()) : cookie.getValue();
 					if (sessionId == null) {
 						continue;
 					}
@@ -130,7 +130,7 @@ public class DefaultCookieSerializer implements CookieSerializer {
 		int maxAge = getMaxAge(cookieValue);
 		if (maxAge > -1) {
 			sb.append("; Max-Age=").append(cookieValue.getCookieMaxAge());
-			ZonedDateTime expires = (maxAge != 0) ? ZonedDateTime.now(this.clock).plusSeconds(maxAge)
+			ZonedDateTime expires = maxAge != 0 ? ZonedDateTime.now(this.clock).plusSeconds(maxAge)
 					: Instant.EPOCH.atZone(ZoneOffset.UTC);
 			sb.append("; Expires=").append(expires.format(DateTimeFormatter.RFC_1123_DATE_TIME));
 		}
@@ -429,7 +429,7 @@ public class DefaultCookieSerializer implements CookieSerializer {
 	private String getCookiePath(HttpServletRequest request) {
 		if (this.cookiePath == null) {
 			String contextPath = request.getContextPath();
-			return (contextPath != null && contextPath.length() > 0) ? contextPath : "/";
+			return contextPath != null && contextPath.length() > 0 ? contextPath : "/";
 		}
 		return this.cookiePath;
 	}

@@ -33,7 +33,7 @@ public class SecurityControllerAdvise {
 
 	@ModelAttribute("currentUserName")
 	String currentUser(Principal principal) {
-		return (principal != null) ? principal.getName() : null;
+		return principal != null ? principal.getName() : null;
 	}
 
 	@ModelAttribute("httpSession")

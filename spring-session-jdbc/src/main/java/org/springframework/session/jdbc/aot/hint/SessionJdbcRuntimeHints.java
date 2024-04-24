@@ -32,7 +32,7 @@ class SessionJdbcRuntimeHints implements RuntimeHintsRegistrar {
 	public void registerHints(RuntimeHints hints, ClassLoader classLoader) {
 		hints.reflection()
 			.registerType(TypeReference.of("javax.sql.DataSource"),
-					(hint) -> hint.withMembers(MemberCategory.INVOKE_DECLARED_METHODS));
+					hint -> hint.withMembers(MemberCategory.INVOKE_DECLARED_METHODS));
 		hints.resources()
 			.registerPattern("org/springframework/session/jdbc/schema-db2.sql")
 			.registerPattern("org/springframework/session/jdbc/schema-derby.sql")

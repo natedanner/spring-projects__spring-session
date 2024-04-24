@@ -114,7 +114,7 @@ public class ReactiveMongoWebSessionConfiguration
 		}
 
 		this.sessionRepositoryCustomizers
-			.forEach((sessionRepositoryCustomizer) -> sessionRepositoryCustomizer.customize(repository));
+			.forEach(sessionRepositoryCustomizer -> sessionRepositoryCustomizer.customize(repository));
 
 		repository.setSessionIdGenerator(this.sessionIdGenerator);
 
@@ -137,7 +137,7 @@ public class ReactiveMongoWebSessionConfiguration
 				.ofSeconds(attributes.<Integer>getNumber("maxInactiveIntervalInSeconds"));
 		}
 
-		String collectionNameValue = (attributes != null) ? attributes.getString("collectionName") : "";
+		String collectionNameValue = attributes != null ? attributes.getString("collectionName") : "";
 		if (StringUtils.hasText(collectionNameValue)) {
 			this.collectionName = this.embeddedValueResolver.resolveStringValue(collectionNameValue);
 		}

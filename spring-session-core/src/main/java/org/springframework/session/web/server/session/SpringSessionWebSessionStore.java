@@ -92,7 +92,7 @@ public class SpringSessionWebSessionStore<S extends Session> implements WebSessi
 	@Override
 	public Mono<WebSession> retrieveSession(String sessionId) {
 		return this.sessions.findById(sessionId)
-			.doOnNext((session) -> session.setLastAccessedTime(this.clock.instant()))
+			.doOnNext(session -> session.setLastAccessedTime(this.clock.instant()))
 			.map(this::existingSession);
 	}
 
@@ -153,7 +153,7 @@ public class SpringSessionWebSessionStore<S extends Session> implements WebSessi
 		@Override
 		public boolean isStarted() {
 			State value = this.state.get();
-			return (State.STARTED.equals(value) || (State.NEW.equals(value) && !getAttributes().isEmpty()));
+			return State.STARTED.equals(value) || (State.NEW.equals(value) && !getAttributes().isEmpty());
 		}
 
 		@Override
@@ -236,7 +236,7 @@ public class SpringSessionWebSessionStore<S extends Session> implements WebSessi
 		public boolean containsValue(Object value) {
 			return this.session.getAttributeNames()
 				.stream()
-				.anyMatch((attrName) -> this.session.getAttribute(attrName) != null);
+				.anyMatch(attrName -> this.session.getAttribute(attrName) != null);
 		}
 
 		@Override
@@ -306,7 +306,7 @@ public class SpringSessionWebSessionStore<S extends Session> implements WebSessi
 
 			@Override
 			public Iterator<Object> iterator() {
-				return new Iterator<Object>() {
+				return new Iterator<>() {
 
 					private Iterator<Entry<String, Object>> i = entrySet().iterator();
 

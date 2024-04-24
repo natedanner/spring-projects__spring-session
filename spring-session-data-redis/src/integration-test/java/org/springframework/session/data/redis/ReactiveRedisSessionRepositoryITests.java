@@ -266,7 +266,7 @@ class ReactiveRedisSessionRepositoryITests extends AbstractRedisITests {
 		ReflectionTestUtils.setField(this.repository, "sessionRedisOperations", spy);
 		ReactiveHashOperations<String, Object, Object> opsForHash = spy(this.sessionRedisOperations.opsForHash());
 		given(spy.opsForHash()).willReturn(opsForHash);
-		willAnswer((invocation) -> Mono.delay(Duration.ofSeconds(1)).then((Mono<Void>) invocation.callRealMethod()))
+		willAnswer(invocation -> Mono.delay(Duration.ofSeconds(1)).then((Mono<Void>) invocation.callRealMethod()))
 			.given(opsForHash)
 			.putAll(anyString(), any());
 		RedisSession toSave = this.repository.createSession().block();

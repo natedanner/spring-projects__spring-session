@@ -64,8 +64,8 @@ public final class SpringSessionBackedReactiveSessionRegistry<S extends Session>
 	public Flux<ReactiveSessionInformation> getAllSessions(Object principal) {
 		Authentication authenticationToken = getAuthenticationToken(principal);
 		return this.indexedSessionRepository.findByPrincipalName(authenticationToken.getName())
-			.flatMapMany((sessionMap) -> Flux.fromIterable(sessionMap.entrySet()))
-			.map((entry) -> new SpringSessionBackedReactiveSessionInformation(entry.getValue()));
+			.flatMapMany(sessionMap -> Flux.fromIterable(sessionMap.entrySet()))
+			.map(entry -> new SpringSessionBackedReactiveSessionInformation(entry.getValue()));
 	}
 
 	@Override

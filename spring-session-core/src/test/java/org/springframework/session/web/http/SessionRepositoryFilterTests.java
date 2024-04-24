@@ -104,18 +104,18 @@ class SessionRepositoryFilterTests {
 
 	@Test
 	void doFilterCreateDate() throws Exception {
-		final String CREATE_ATTR = "create";
+		final String createAttr = "create";
 		doFilter(new DoInFilter() {
 			@Override
 			public void doFilter(HttpServletRequest wrappedRequest) {
 				long creationTime = wrappedRequest.getSession().getCreationTime();
 				long now = System.currentTimeMillis();
 				assertThat(now - creationTime).isGreaterThanOrEqualTo(0).isLessThan(5000);
-				SessionRepositoryFilterTests.this.request.setAttribute(CREATE_ATTR, creationTime);
+				SessionRepositoryFilterTests.this.request.setAttribute(createAttr, creationTime);
 			}
 		});
 
-		final long expectedCreationTime = (Long) this.request.getAttribute(CREATE_ATTR);
+		final long expectedCreationTime = (Long) this.request.getAttribute(createAttr);
 		Thread.sleep(50L);
 		nextRequest();
 
@@ -151,13 +151,13 @@ class SessionRepositoryFilterTests {
 
 	@Test
 	void doFilterLastAccessedTime() throws Exception {
-		final String ACCESS_ATTR = "create";
+		final String accessAttr = "create";
 		doFilter(new DoInFilter() {
 			@Override
 			public void doFilter(HttpServletRequest wrappedRequest) {
 				long lastAccessed = wrappedRequest.getSession().getLastAccessedTime();
 				assertThat(lastAccessed).isCloseTo(wrappedRequest.getSession().getCreationTime(), Offset.offset(5L));
-				SessionRepositoryFilterTests.this.request.setAttribute(ACCESS_ATTR, lastAccessed);
+				SessionRepositoryFilterTests.this.request.setAttribute(accessAttr, lastAccessed);
 			}
 		});
 
@@ -176,18 +176,18 @@ class SessionRepositoryFilterTests {
 
 	@Test
 	void doFilterId() throws Exception {
-		final String ID_ATTR = "create";
+		final String idAttr = "create";
 		doFilter(new DoInFilter() {
 			@Override
 			public void doFilter(HttpServletRequest wrappedRequest) {
 				String id = wrappedRequest.getSession().getId();
 				assertThat(id).isNotNull();
 				assertThat(wrappedRequest.getSession().getId()).isEqualTo(id);
-				SessionRepositoryFilterTests.this.request.setAttribute(ID_ATTR, id);
+				SessionRepositoryFilterTests.this.request.setAttribute(idAttr, id);
 			}
 		});
 
-		final String id = (String) this.request.getAttribute(ID_ATTR);
+		final String id = (String) this.request.getAttribute(idAttr);
 		assertThat(base64Decode(getSessionCookie().getValue())).isEqualTo(id);
 		setSessionCookie(id);
 
@@ -201,16 +201,16 @@ class SessionRepositoryFilterTests {
 
 	@Test
 	void doFilterIdChanges() throws Exception {
-		final String ID_ATTR = "create";
+		final String idAttr = "create";
 		doFilter(new DoInFilter() {
 			@Override
 			public void doFilter(HttpServletRequest wrappedRequest) {
 				String id = wrappedRequest.getSession().getId();
-				SessionRepositoryFilterTests.this.request.setAttribute(ID_ATTR, id);
+				SessionRepositoryFilterTests.this.request.setAttribute(idAttr, id);
 			}
 		});
 
-		final String id = (String) this.request.getAttribute(ID_ATTR);
+		final String id = (String) this.request.getAttribute(idAttr);
 		setupRequest();
 
 		doFilter(new DoInFilter() {
@@ -268,14 +268,14 @@ class SessionRepositoryFilterTests {
 
 	@Test
 	void doFilterAttribute() throws Exception {
-		final String ATTR = "ATTR";
-		final String VALUE = "VALUE";
+		final String attr = "ATTR";
+		final String value = "VALUE";
 		doFilter(new DoInFilter() {
 			@Override
 			public void doFilter(HttpServletRequest wrappedRequest) {
-				wrappedRequest.getSession().setAttribute(ATTR, VALUE);
-				assertThat(wrappedRequest.getSession().getAttribute(ATTR)).isEqualTo(VALUE);
-				assertThat(Collections.list(wrappedRequest.getSession().getAttributeNames())).containsOnly(ATTR);
+				wrappedRequest.getSession().setAttribute(attr, value);
+				assertThat(wrappedRequest.getSession().getAttribute(attr)).isEqualTo(value);
+				assertThat(Collections.list(wrappedRequest.getSession().getAttributeNames())).containsOnly(attr);
 			}
 		});
 
@@ -284,8 +284,8 @@ class SessionRepositoryFilterTests {
 		doFilter(new DoInFilter() {
 			@Override
 			public void doFilter(HttpServletRequest wrappedRequest) {
-				assertThat(wrappedRequest.getSession().getAttribute(ATTR)).isEqualTo(VALUE);
-				assertThat(Collections.list(wrappedRequest.getSession().getAttributeNames())).containsOnly(ATTR);
+				assertThat(wrappedRequest.getSession().getAttribute(attr)).isEqualTo(value);
+				assertThat(Collections.list(wrappedRequest.getSession().getAttributeNames())).containsOnly(attr);
 			}
 		});
 
@@ -294,11 +294,11 @@ class SessionRepositoryFilterTests {
 		doFilter(new DoInFilter() {
 			@Override
 			public void doFilter(HttpServletRequest wrappedRequest) {
-				assertThat(wrappedRequest.getSession().getAttribute(ATTR)).isEqualTo(VALUE);
+				assertThat(wrappedRequest.getSession().getAttribute(attr)).isEqualTo(value);
 
-				wrappedRequest.getSession().removeAttribute(ATTR);
+				wrappedRequest.getSession().removeAttribute(attr);
 
-				assertThat(wrappedRequest.getSession().getAttribute(ATTR)).isNull();
+				assertThat(wrappedRequest.getSession().getAttribute(attr)).isNull();
 			}
 		});
 
@@ -307,7 +307,7 @@ class SessionRepositoryFilterTests {
 		doFilter(new DoInFilter() {
 			@Override
 			public void doFilter(HttpServletRequest wrappedRequest) {
-				assertThat(wrappedRequest.getSession().getAttribute(ATTR)).isNull();
+				assertThat(wrappedRequest.getSession().getAttribute(attr)).isNull();
 			}
 		});
 	}
@@ -446,13 +446,13 @@ class SessionRepositoryFilterTests {
 	// gh-152
 	@Test
 	void doFilterChangeSessionId() throws Exception {
-		final String ATTR = "ATTRIBUTE";
-		final String VALUE = "VALUE";
+		final String attr = "ATTRIBUTE";
+		final String value = "VALUE";
 
 		doFilter(new DoInFilter() {
 			@Override
 			public void doFilter(HttpServletRequest wrappedRequest) {
-				wrappedRequest.getSession().setAttribute(ATTR, VALUE);
+				wrappedRequest.getSession().setAttribute(attr, value);
 			}
 		});
 
@@ -484,7 +484,7 @@ class SessionRepositoryFilterTests {
 		doFilter(new DoInFilter() {
 			@Override
 			public void doFilter(HttpServletRequest wrappedRequest) {
-				assertThat(wrappedRequest.getSession().getAttribute(ATTR)).isEqualTo(VALUE);
+				assertThat(wrappedRequest.getSession().getAttribute(attr)).isEqualTo(value);
 			}
 		});
 	}
@@ -591,16 +591,16 @@ class SessionRepositoryFilterTests {
 
 	@Test
 	void doFilterGetAttr() throws Exception {
-		final String ATTR_NAME = "attr";
-		final String ATTR_VALUE = "value";
-		final String ATTR_NAME2 = "attr2";
-		final String ATTR_VALUE2 = "value2";
+		final String attrName = "attr";
+		final String attrValue = "value";
+		final String attrName2 = "attr2";
+		final String attrValue2 = "value2";
 
 		doFilter(new DoInFilter() {
 			@Override
 			public void doFilter(HttpServletRequest wrappedRequest) {
-				wrappedRequest.getSession().setAttribute(ATTR_NAME, ATTR_VALUE);
-				wrappedRequest.getSession().setAttribute(ATTR_NAME2, ATTR_VALUE2);
+				wrappedRequest.getSession().setAttribute(attrName, attrValue);
+				wrappedRequest.getSession().setAttribute(attrName2, attrValue2);
 			}
 		});
 
@@ -611,8 +611,8 @@ class SessionRepositoryFilterTests {
 		doFilter(new DoInFilter() {
 			@Override
 			public void doFilter(HttpServletRequest wrappedRequest) {
-				assertThat(wrappedRequest.getSession().getAttribute(ATTR_NAME)).isEqualTo(ATTR_VALUE);
-				assertThat(wrappedRequest.getSession().getAttribute(ATTR_NAME2)).isEqualTo(ATTR_VALUE2);
+				assertThat(wrappedRequest.getSession().getAttribute(attrName)).isEqualTo(attrValue);
+				assertThat(wrappedRequest.getSession().getAttribute(attrName2)).isEqualTo(attrValue2);
 			}
 		});
 	}
@@ -799,17 +799,17 @@ class SessionRepositoryFilterTests {
 
 	@Test
 	void doFilterInvalidateAndGetSession() throws Exception {
-		final String ATTR_NAME = "attr";
-		final String ATTR_VALUE = "value";
-		final String ATTR_NAME2 = "attr2";
-		final String ATTR_VALUE2 = "value2";
+		final String attrName = "attr";
+		final String attrValue = "value";
+		final String attrName2 = "attr2";
+		final String attrValue2 = "value2";
 
 		doFilter(new DoInFilter() {
 			@Override
 			public void doFilter(HttpServletRequest wrappedRequest) {
-				wrappedRequest.getSession().setAttribute(ATTR_NAME, ATTR_VALUE);
+				wrappedRequest.getSession().setAttribute(attrName, attrValue);
 				wrappedRequest.getSession().invalidate();
-				wrappedRequest.getSession().setAttribute(ATTR_NAME2, ATTR_VALUE2);
+				wrappedRequest.getSession().setAttribute(attrName2, attrValue2);
 			}
 		});
 
@@ -820,8 +820,8 @@ class SessionRepositoryFilterTests {
 		doFilter(new DoInFilter() {
 			@Override
 			public void doFilter(HttpServletRequest wrappedRequest) {
-				assertThat(wrappedRequest.getSession().getAttribute(ATTR_NAME)).isNull();
-				assertThat(wrappedRequest.getSession().getAttribute(ATTR_NAME2)).isEqualTo(ATTR_VALUE2);
+				assertThat(wrappedRequest.getSession().getAttribute(attrName)).isNull();
+				assertThat(wrappedRequest.getSession().getAttribute(attrName2)).isEqualTo(attrValue2);
 			}
 		});
 	}

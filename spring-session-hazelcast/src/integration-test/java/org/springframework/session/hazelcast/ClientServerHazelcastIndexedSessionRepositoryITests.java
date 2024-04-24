@@ -50,7 +50,7 @@ class ClientServerHazelcastIndexedSessionRepositoryITests extends AbstractHazelc
 
 	// @formatter:off
 	private static GenericContainer container = new GenericContainer<>(new ImageFromDockerfile()
-			.withDockerfileFromBuilder((builder) -> builder
+			.withDockerfileFromBuilder(builder -> builder
 					.from("hazelcast/hazelcast:5.3.2-slim")
 					.user("root")
 					.run("apk del --no-cache openjdk11-jre-headless")

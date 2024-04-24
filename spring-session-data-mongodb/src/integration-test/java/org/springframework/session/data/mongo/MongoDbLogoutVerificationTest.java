@@ -125,7 +125,7 @@ public class MongoDbLogoutVerificationTest {
 			.expectStatus()
 			.isFound() //
 			.expectHeader()
-			.value(HttpHeaders.LOCATION, (value) -> AssertionsForClassTypes.assertThat(value).isEqualTo("/login"));
+			.value(HttpHeaders.LOCATION, value -> AssertionsForClassTypes.assertThat(value).isEqualTo("/login"));
 
 		// 5. Verify the original SESSION cookie no longer works.
 
@@ -136,7 +136,7 @@ public class MongoDbLogoutVerificationTest {
 			.expectStatus()
 			.isFound() //
 			.expectHeader()
-			.value(HttpHeaders.LOCATION, (value) -> AssertionsForClassTypes.assertThat(value).isEqualTo("/login"));
+			.value(HttpHeaders.LOCATION, value -> AssertionsForClassTypes.assertThat(value).isEqualTo("/login"));
 	}
 
 	@RestController
@@ -159,8 +159,8 @@ public class MongoDbLogoutVerificationTest {
 			return http
 					.logout(Customizer.withDefaults())
 					.formLogin(Customizer.withDefaults())
-					.csrf((csrf) -> csrf.disable())
-					.authorizeExchange((ae) -> ae.anyExchange().authenticated())
+					.csrf(ServerHttpSecurity.CsrfSpec::disable)
+					.authorizeExchange(ae -> ae.anyExchange().authenticated())
 					.build();
 			// @formatter:on
 		}

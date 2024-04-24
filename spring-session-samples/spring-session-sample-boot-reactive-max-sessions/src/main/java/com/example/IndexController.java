@@ -36,7 +36,7 @@ class IndexController {
 	@GetMapping("/")
 	Mono<String> index(Model model, Authentication authentication) {
 		return this.sessionRepository.findByPrincipalName(authentication.getName())
-			.doOnNext((sessions) -> model.addAttribute("sessions", sessions.values()))
+			.doOnNext(sessions -> model.addAttribute("sessions", sessions.values()))
 			.thenReturn("index");
 	}
 

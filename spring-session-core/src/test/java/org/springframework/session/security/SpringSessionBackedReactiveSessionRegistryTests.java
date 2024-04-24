@@ -82,7 +82,7 @@ class SpringSessionBackedReactiveSessionRegistryTests {
 		session.setAttribute(ReactiveFindByIndexNameSessionRepository.PRINCIPAL_NAME_INDEX_NAME, "johndoe");
 		this.sessionRepository.save(session).block();
 		StepVerifier.create(this.sessionRegistry.getSessionInformation(session.getId()))
-			.assertNext((sessionInformation) -> {
+			.assertNext(sessionInformation -> {
 				assertThat(sessionInformation.getSessionId()).isEqualTo(session.getId());
 				assertThat(sessionInformation.getLastAccessTime()).isEqualTo(session.getLastAccessedTime());
 				assertThat(sessionInformation.getPrincipal()).isEqualTo("johndoe");
@@ -99,7 +99,7 @@ class SpringSessionBackedReactiveSessionRegistryTests {
 		session.setAttribute("SPRING_SECURITY_CONTEXT", securityContext);
 		this.sessionRepository.save(session).block();
 		StepVerifier.create(this.sessionRegistry.getSessionInformation(session.getId()))
-			.assertNext((sessionInformation) -> {
+			.assertNext(sessionInformation -> {
 				assertThat(sessionInformation.getSessionId()).isEqualTo(session.getId());
 				assertThat(sessionInformation.getLastAccessTime()).isEqualTo(session.getLastAccessedTime());
 				assertThat(sessionInformation.getPrincipal()).isEqualTo("johndoe");
@@ -112,7 +112,7 @@ class SpringSessionBackedReactiveSessionRegistryTests {
 		MapSession session = this.sessionRepository.createSession().block();
 		this.sessionRepository.save(session).block();
 		StepVerifier.create(this.sessionRegistry.getSessionInformation(session.getId()))
-			.assertNext((sessionInformation) -> {
+			.assertNext(sessionInformation -> {
 				assertThat(sessionInformation.getSessionId()).isEqualTo(session.getId());
 				assertThat(sessionInformation.getLastAccessTime()).isEqualTo(session.getLastAccessedTime());
 				assertThat(sessionInformation.getPrincipal()).isEqualTo("");
@@ -134,9 +134,9 @@ class SpringSessionBackedReactiveSessionRegistryTests {
 	void getAllSessionsWhenSessionsExistsThenReturned() {
 		Flux<ReactiveSessionInformation> sessions = this.sessionRegistry.getAllSessions("johndoe");
 		StepVerifier.create(sessions)
-			.assertNext((sessionInformation) -> assertThat(sessionInformation.getPrincipal()).isEqualTo("johndoe"))
-			.assertNext((sessionInformation) -> assertThat(sessionInformation.getPrincipal()).isEqualTo("johndoe"))
-			.assertNext((sessionInformation) -> assertThat(sessionInformation.getPrincipal()).isEqualTo("johndoe"))
+			.assertNext(sessionInformation -> assertThat(sessionInformation.getPrincipal()).isEqualTo("johndoe"))
+			.assertNext(sessionInformation -> assertThat(sessionInformation.getPrincipal()).isEqualTo("johndoe"))
+			.assertNext(sessionInformation -> assertThat(sessionInformation.getPrincipal()).isEqualTo("johndoe"))
 			.verifyComplete();
 	}
 

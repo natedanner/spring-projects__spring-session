@@ -89,8 +89,8 @@ public class SpringSessionRememberMeServices implements RememberMeServices, Logo
 	protected boolean rememberMeRequested(HttpServletRequest request, String parameter) {
 		String rememberMe = request.getParameter(parameter);
 		if (rememberMe != null) {
-			if (rememberMe.equalsIgnoreCase("true") || rememberMe.equalsIgnoreCase("on")
-					|| rememberMe.equalsIgnoreCase("yes") || rememberMe.equals("1")) {
+			if ("true".equalsIgnoreCase(rememberMe) || "on".equalsIgnoreCase(rememberMe)
+					|| "yes".equalsIgnoreCase(rememberMe) || "1".equals(rememberMe)) {
 				return true;
 			}
 		}

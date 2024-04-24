@@ -366,13 +366,13 @@ public class ReactiveMongoWebSessionConfigurationTests {
 		@Bean
 		@Order(0)
 		ReactiveSessionRepositoryCustomizer<ReactiveMongoSessionRepository> sessionRepositoryCustomizerOne() {
-			return (sessionRepository) -> sessionRepository.setDefaultMaxInactiveInterval(Duration.ZERO);
+			return sessionRepository -> sessionRepository.setDefaultMaxInactiveInterval(Duration.ZERO);
 		}
 
 		@Bean
 		@Order(1)
 		ReactiveSessionRepositoryCustomizer<ReactiveMongoSessionRepository> sessionRepositoryCustomizerTwo() {
-			return (sessionRepository) -> sessionRepository.setDefaultMaxInactiveInterval(Duration.ofSeconds(10000));
+			return sessionRepository -> sessionRepository.setDefaultMaxInactiveInterval(Duration.ofSeconds(10000));
 		}
 
 	}
@@ -427,7 +427,7 @@ public class ReactiveMongoWebSessionConfigurationTests {
 
 		@Bean
 		ReactiveSessionRepositoryCustomizer<ReactiveMongoSessionRepository> sessionRepositoryCustomizer() {
-			return (sessionRepository) -> sessionRepository.setDefaultMaxInactiveInterval(Duration.ZERO);
+			return sessionRepository -> sessionRepository.setDefaultMaxInactiveInterval(Duration.ZERO);
 		}
 
 	}

@@ -30,7 +30,7 @@ public class SessionConfig implements BeanClassLoaderAware {
 
 	@Bean
 	SessionRepositoryCustomizer<JdbcIndexedSessionRepository> customizer() {
-		return (sessionRepository) -> sessionRepository.setCreateSessionAttributeQuery(CREATE_SESSION_ATTRIBUTE_QUERY);
+		return sessionRepository -> sessionRepository.setCreateSessionAttributeQuery(CREATE_SESSION_ATTRIBUTE_QUERY);
 	}
 
 	@Bean("springSessionConversionService")

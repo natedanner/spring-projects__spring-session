@@ -37,7 +37,7 @@ import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
  */
 class RedisSessionMapperTests {
 
-	private RedisSessionMapper mapper = new RedisSessionMapper();
+	private final RedisSessionMapper mapper = new RedisSessionMapper();
 
 	@Test
 	void apply_NullId_ShouldThrowException() {

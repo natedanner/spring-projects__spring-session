@@ -41,7 +41,7 @@ public class SpringMavenPluginITest {
     @Disabled
 	@Test
     public void signArchivesWhenInMemory() throws Exception {
-        LinkedHashMap<String, String> map = new LinkedHashMap<String, String>(2);
+        LinkedHashMap<String, String> map = new LinkedHashMap<>(2);
         map.put("ORG_GRADLE_PROJECT_signingKey", getSigningKey());
         map.put("ORG_GRADLE_PROJECT_signingPassword", "password");
         BuildResult result = this.testKit.withProjectResource("samples/maven/signing")

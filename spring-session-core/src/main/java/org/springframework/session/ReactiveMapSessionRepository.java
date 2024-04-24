@@ -86,9 +86,9 @@ public class ReactiveMapSessionRepository implements ReactiveSessionRepository<M
 	public Mono<MapSession> findById(String id) {
 		// @formatter:off
 		return Mono.defer(() -> Mono.justOrEmpty(this.sessions.get(id))
-				.filter((session) -> !session.isExpired())
+				.filter(session -> !session.isExpired())
 				.map(MapSession::new)
-				.doOnNext((session) -> session.setSessionIdGenerator(this.sessionIdGenerator))
+				.doOnNext(session -> session.setSessionIdGenerator(this.sessionIdGenerator))
 				.switchIfEmpty(deleteById(id).then(Mono.empty())));
 		// @formatter:on
 	}
@@ -104,7 +104,7 @@ public class ReactiveMapSessionRepository implements ReactiveSessionRepository<M
 		return Mono.fromSupplier(() -> this.sessionIdGenerator.generate())
 				.subscribeOn(Schedulers.boundedElastic())
 				.publishOn(Schedulers.parallel())
-				.map((sessionId) -> {
+				.map(sessionId -> {
 					MapSession result = new MapSession(sessionId);
 					result.setMaxInactiveInterval(this.defaultMaxInactiveInterval);
 					result.setSessionIdGenerator(this.sessionIdGenerator);

@@ -53,7 +53,7 @@ import static org.mockito.Mockito.verify;
  */
 class SpringHttpSessionConfigurationTests {
 
-	private AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
+	private final AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
 
 	@AfterEach
 	void closeContext() {

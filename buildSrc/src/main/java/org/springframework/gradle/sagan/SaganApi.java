@@ -28,8 +28,8 @@ import java.util.Base64;
 public class SaganApi {
 	private String baseUrl = "https://spring.io/api";
 
-	private OkHttpClient client;
-	private Gson gson = new Gson();
+	private final OkHttpClient client;
+	private final Gson gson = new Gson();
 
 	public SaganApi(String gitHubToken) {
 		this.client = new OkHttpClient.Builder()

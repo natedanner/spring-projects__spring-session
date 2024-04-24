@@ -38,7 +38,7 @@ final class SortedSetReactiveRedisSessionExpirationStore {
 
 	private String namespace;
 
-	private int retrieveCount = 100;
+	private final int retrieveCount = 100;
 
 	SortedSetReactiveRedisSessionExpirationStore(ReactiveRedisOperations<String, Object> sessionRedisOperations,
 			String namespace) {

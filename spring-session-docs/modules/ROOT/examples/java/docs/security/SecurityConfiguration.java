@@ -40,7 +40,7 @@ public class SecurityConfiguration<S extends Session> {
 		// @formatter:off
 		return http
 			// other config goes here...
-			.sessionManagement((sessionManagement) -> sessionManagement
+			.sessionManagement(sessionManagement -> sessionManagement
 				.maximumSessions(2)
 				.sessionRegistry(sessionRegistry())
 			)

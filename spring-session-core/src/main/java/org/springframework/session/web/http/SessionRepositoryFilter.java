@@ -268,7 +268,7 @@ public class SessionRepositoryFilter<S extends Session> extends OncePerRequestFi
 				if (requestedSession != null) {
 					requestedSession.setLastAccessedTime(Instant.now());
 				}
-				this.requestedSessionIdValid = (requestedSession != null);
+				this.requestedSessionIdValid = requestedSession != null;
 			}
 			return this.requestedSessionIdValid;
 		}

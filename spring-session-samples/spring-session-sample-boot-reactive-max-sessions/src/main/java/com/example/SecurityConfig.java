@@ -51,9 +51,9 @@ public class SecurityConfig {
 					.matchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
 					.anyExchange().authenticated())
 			.formLogin(Customizer.withDefaults())
-			.sessionManagement((sessions) -> sessions
-					.concurrentSessions((concurrency) -> concurrency
-							.maximumSessions((authentication) -> {
+			.sessionManagement(sessions -> sessions
+					.concurrentSessions(concurrency -> concurrency
+							.maximumSessions(authentication -> {
 								if (authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_UNLIMITED_SESSIONS"))) {
 									return Mono.empty();
 								}

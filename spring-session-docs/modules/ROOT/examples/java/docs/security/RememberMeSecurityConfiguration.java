@@ -44,14 +44,14 @@ public class RememberMeSecurityConfiguration {
 	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http
 			// ... additional configuration ...
-			.rememberMe((rememberMe) -> rememberMe
+			.rememberMe(rememberMe -> rememberMe
 				.rememberMeServices(rememberMeServices())
 			);
 		// end::http-rememberme[]
 
 		return http
 			.formLogin(Customizer.withDefaults())
-			.authorizeHttpRequests((authorize) -> authorize
+			.authorizeHttpRequests(authorize -> authorize
 				.anyRequest().authenticated()
 			).build();
 	}

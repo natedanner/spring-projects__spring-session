@@ -261,7 +261,7 @@ public class ReactiveRedisIndexedSessionRepository
 
 	private SaveMode saveMode = SaveMode.ON_SET_ATTRIBUTE;
 
-	private ApplicationEventPublisher eventPublisher = (event) -> {
+	private ApplicationEventPublisher eventPublisher = event -> {
 	};
 
 	private String sessionCreatedChannelPrefix;
@@ -281,9 +281,9 @@ public class ReactiveRedisIndexedSessionRepository
 
 	private int database = DEFAULT_DATABASE;
 
-	private ReactiveRedisSessionIndexer indexer;
+	private final ReactiveRedisSessionIndexer indexer;
 
-	private SortedSetReactiveRedisSessionExpirationStore expirationStore;
+	private final SortedSetReactiveRedisSessionExpirationStore expirationStore;
 
 	private Duration cleanupInterval = Duration.ofSeconds(60);
 
@@ -316,9 +316,9 @@ public class ReactiveRedisIndexedSessionRepository
 	private void setupCleanupTask() {
 		if (!this.cleanupInterval.isZero()) {
 			Disposable cleanupExpiredSessionsTask = Flux.interval(this.cleanupInterval, this.cleanupInterval)
-				.onBackpressureDrop((count) -> logger
+				.onBackpressureDrop(count -> logger
 					.debug("Skipping clean-up expired sessions because the previous one is still running."))
-				.concatMap((count) -> cleanUpExpiredSessions())
+				.concatMap(count -> cleanUpExpiredSessions())
 				.subscribe();
 			this.subscriptions.add(cleanupExpiredSessionsTask);
 		}
@@ -353,8 +353,8 @@ public class ReactiveRedisIndexedSessionRepository
 			.subscribeOn(Schedulers.boundedElastic())
 			.publishOn(Schedulers.parallel())
 			.map(MapSession::new)
-			.doOnNext((session) -> session.setMaxInactiveInterval(this.defaultMaxInactiveInterval))
-			.map((session) -> new RedisSession(session, true));
+			.doOnNext(session -> session.setMaxInactiveInterval(this.defaultMaxInactiveInterval))
+			.map(session -> new RedisSession(session, true));
 	}
 
 	@Override
@@ -375,11 +375,11 @@ public class ReactiveRedisIndexedSessionRepository
 		// @formatter:off
 		String sessionKey = getSessionKey(sessionId);
 		return this.sessionRedisOperations.opsForHash().entries(sessionKey)
-				.collectMap((entry) -> entry.getKey().toString(), Map.Entry::getValue)
-				.filter((map) -> !map.isEmpty())
-				.flatMap((map) -> this.redisSessionMapper.apply(sessionId, map))
-				.filter((session) -> allowExpired || !session.isExpired())
-				.map((session) -> new RedisSession(session, false));
+				.collectMap(entry -> entry.getKey().toString(), Map.Entry::getValue)
+				.filter(map -> !map.isEmpty())
+				.flatMap(map -> this.redisSessionMapper.apply(sessionId, map))
+				.filter(session -> allowExpired || !session.isExpired())
+				.map(session -> new RedisSession(session, false));
 		// @formatter:on
 	}
 
@@ -387,11 +387,11 @@ public class ReactiveRedisIndexedSessionRepository
 	public Mono<Void> deleteById(String id) {
 		// @formatter:off
 		return getSession(id, true)
-				.flatMap((session) -> this.sessionRedisOperations.delete(getExpiredKey(session.getId()))
+				.flatMap(session -> this.sessionRedisOperations.delete(getExpiredKey(session.getId()))
 						.thenReturn(session))
-				.flatMap((session) -> this.sessionRedisOperations.delete(getSessionKey(session.getId())).thenReturn(session))
-				.flatMap((session) -> this.indexer.delete(session.getId()).thenReturn(session))
-				.flatMap((session) -> this.expirationStore.remove(session.getId()));
+				.flatMap(session -> this.sessionRedisOperations.delete(getSessionKey(session.getId())).thenReturn(session))
+				.flatMap(session -> this.indexer.delete(session.getId()).thenReturn(session))
+				.flatMap(session -> this.expirationStore.remove(session.getId()));
 		// @formatter:on
 	}
 
@@ -416,16 +416,16 @@ public class ReactiveRedisIndexedSessionRepository
 	@SuppressWarnings("unchecked")
 	private Mono<Void> onSessionCreatedChannelMessage(ReactiveSubscription.Message<String, Object> message) {
 		return Mono.just(message.getChannel())
-			.filter((channel) -> channel.startsWith(getSessionCreatedChannelPrefix()))
-			.map((channel) -> {
+			.filter(channel -> channel.startsWith(getSessionCreatedChannelPrefix()))
+			.map(channel -> {
 				int sessionIdBeginIndex = channel.lastIndexOf(":") + 1;
 				return channel.substring(sessionIdBeginIndex);
 			})
-			.flatMap((sessionId) -> {
+			.flatMap(sessionId -> {
 				Map<String, Object> entries = (Map<String, Object>) message.getMessage();
 				return this.redisSessionMapper.apply(sessionId, entries);
 			})
-			.map((loaded) -> {
+			.map(loaded -> {
 				RedisSession session = new RedisSession(loaded, false);
 				return new SessionCreatedEvent(this, session);
 			})
@@ -434,13 +434,13 @@ public class ReactiveRedisIndexedSessionRepository
 	}
 
 	private Mono<Void> onKeyDestroyedMessage(ReactiveSubscription.Message<String, String> message) {
-		return Mono.just(message.getMessage()).filter((key) -> key.startsWith(getExpiredKeyPrefix())).map((key) -> {
+		return Mono.just(message.getMessage()).filter(key -> key.startsWith(getExpiredKeyPrefix())).map(key -> {
 			int sessionIdBeginIndex = key.lastIndexOf(":") + 1;
 			return key.substring(sessionIdBeginIndex);
 		})
-			.flatMap((sessionId) -> getSession(sessionId, true))
-			.flatMap((session) -> this.deleteById(session.getId()).thenReturn(session))
-			.map((session) -> {
+			.flatMap(sessionId -> getSession(sessionId, true))
+			.flatMap(session -> this.deleteById(session.getId()).thenReturn(session))
+			.map(session -> {
 				if (message.getChannel().equals(this.sessionDeletedChannel)) {
 					return new SessionDeletedEvent(this, session);
 				}
@@ -598,7 +598,7 @@ public class ReactiveRedisIndexedSessionRepository
 				this.delta.put(RedisSessionMapper.LAST_ACCESSED_TIME_KEY, cached.getLastAccessedTime().toEpochMilli());
 			}
 			if (this.isNew || (ReactiveRedisIndexedSessionRepository.this.saveMode == SaveMode.ALWAYS)) {
-				getAttributeNames().forEach((attributeName) -> this.delta.put(getAttributeNameWithPrefix(attributeName),
+				getAttributeNames().forEach(attributeName -> this.delta.put(getAttributeNameWithPrefix(attributeName),
 						cached.getAttribute(attributeName)));
 			}
 		}
@@ -684,7 +684,7 @@ public class ReactiveRedisIndexedSessionRepository
 
 		private Mono<Void> save() {
 			return Mono
-				.defer(() -> saveChangeSessionId().then(saveDelta()).doOnSuccess((unused) -> this.isNew = false));
+				.defer(() -> saveChangeSessionId().then(saveDelta()).doOnSuccess(unused -> this.isNew = false));
 		}
 
 		private Mono<Void> saveDelta() {
@@ -707,7 +707,7 @@ public class ReactiveRedisIndexedSessionRepository
 				setTtl = ReactiveRedisIndexedSessionRepository.this.sessionRedisOperations.expire(sessionKey,
 						fiveMinutesFromActualExpiration);
 				updateExpireKey = updateExpireKey
-					.flatMap((length) -> ReactiveRedisIndexedSessionRepository.this.sessionRedisOperations
+					.flatMap(length -> ReactiveRedisIndexedSessionRepository.this.sessionRedisOperations
 						.expire(expiredKey, getMaxInactiveInterval()));
 			}
 			else {
@@ -724,7 +724,7 @@ public class ReactiveRedisIndexedSessionRepository
 					.then();
 			}
 
-			return update.flatMap((updated) -> setTtl)
+			return update.flatMap(updated -> setTtl)
 				.then(updateExpireKey)
 				.then(publishCreated)
 				.then(Mono.fromRunnable(() -> this.delta = new HashMap<>(this.delta.size())))
@@ -764,10 +764,10 @@ public class ReactiveRedisIndexedSessionRepository
 
 		private Mono<Void> renameKey(String oldKey, String newKey) {
 			return ReactiveRedisIndexedSessionRepository.this.sessionRedisOperations.rename(oldKey, newKey)
-				.onErrorResume((ex) -> {
+				.onErrorResume(ex -> {
 					String message = NestedExceptionUtils.getMostSpecificCause(ex).getMessage();
 					return StringUtils.startsWithIgnoreCase(message, "ERR no such key");
-				}, (ex) -> Mono.empty())
+				}, ex -> Mono.empty())
 				.then();
 		}
 

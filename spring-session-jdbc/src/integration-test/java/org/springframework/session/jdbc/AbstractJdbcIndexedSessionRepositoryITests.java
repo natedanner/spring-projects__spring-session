@@ -248,7 +248,7 @@ abstract class AbstractJdbcIndexedSessionRepositoryITests {
 
 		assertThat(findByPrincipalName).hasSize(1);
 		assertThat(findByPrincipalName.keySet()).containsOnly(toSave.getId());
-		findByPrincipalName.values().forEach((session) -> {
+		findByPrincipalName.values().forEach(session -> {
 			assertThat(session.isChanged()).isFalse();
 			assertThat(session.getDelta()).isEmpty();
 		});
@@ -272,7 +272,7 @@ abstract class AbstractJdbcIndexedSessionRepositoryITests {
 
 		assertThat(findByPrincipalName).hasSize(1);
 		assertThat(findByPrincipalName.keySet()).containsOnly(toSave.getId());
-		findByPrincipalName.values().forEach((session) -> {
+		findByPrincipalName.values().forEach(session -> {
 			assertThat(session.isChanged()).isFalse();
 			assertThat(session.getDelta()).isEmpty();
 		});
@@ -315,7 +315,7 @@ abstract class AbstractJdbcIndexedSessionRepositoryITests {
 
 		assertThat(findByPrincipalName).hasSize(1);
 		assertThat(findByPrincipalName.keySet()).containsOnly(toSave.getId());
-		findByPrincipalName.values().forEach((session) -> {
+		findByPrincipalName.values().forEach(session -> {
 			assertThat(session.isChanged()).isFalse();
 			assertThat(session.getDelta()).isEmpty();
 		});
@@ -361,7 +361,7 @@ abstract class AbstractJdbcIndexedSessionRepositoryITests {
 
 		assertThat(findByPrincipalName).hasSize(1);
 		assertThat(findByPrincipalName.keySet()).containsOnly(toSave.getId());
-		findByPrincipalName.values().forEach((session) -> {
+		findByPrincipalName.values().forEach(session -> {
 			assertThat(session.isChanged()).isFalse();
 			assertThat(session.getDelta()).isEmpty();
 		});
@@ -419,7 +419,7 @@ abstract class AbstractJdbcIndexedSessionRepositoryITests {
 
 		assertThat(findByPrincipalName).hasSize(1);
 		assertThat(findByPrincipalName.keySet()).containsOnly(toSave.getId());
-		findByPrincipalName.values().forEach((session) -> {
+		findByPrincipalName.values().forEach(session -> {
 			assertThat(session.isChanged()).isFalse();
 			assertThat(session.getDelta()).isEmpty();
 		});
@@ -442,7 +442,7 @@ abstract class AbstractJdbcIndexedSessionRepositoryITests {
 
 		assertThat(findByPrincipalName).hasSize(1);
 		assertThat(findByPrincipalName.keySet()).containsOnly(toSave.getId());
-		findByPrincipalName.values().forEach((session) -> {
+		findByPrincipalName.values().forEach(session -> {
 			assertThat(session.isChanged()).isFalse();
 			assertThat(session.getDelta()).isEmpty();
 		});
@@ -482,7 +482,7 @@ abstract class AbstractJdbcIndexedSessionRepositoryITests {
 
 		assertThat(findByPrincipalName).hasSize(1);
 		assertThat(findByPrincipalName.keySet()).containsOnly(toSave.getId());
-		findByPrincipalName.values().forEach((session) -> {
+		findByPrincipalName.values().forEach(session -> {
 			assertThat(session.isChanged()).isFalse();
 			assertThat(session.getDelta()).isEmpty();
 		});
@@ -525,7 +525,7 @@ abstract class AbstractJdbcIndexedSessionRepositoryITests {
 
 		assertThat(findByPrincipalName).hasSize(1);
 		assertThat(findByPrincipalName.keySet()).containsOnly(toSave.getId());
-		findByPrincipalName.values().forEach((session) -> {
+		findByPrincipalName.values().forEach(session -> {
 			assertThat(session.isChanged()).isFalse();
 			assertThat(session.getDelta()).isEmpty();
 		});
@@ -801,7 +801,7 @@ abstract class AbstractJdbcIndexedSessionRepositoryITests {
 		String attributeName = "attribute1";
 		String attributeValue = "value1";
 		try (LobCreator lobCreator = this.lobHandler.getLobCreator()) {
-			this.jdbcOperations.update("INSERT INTO SPRING_SESSION_ATTRIBUTES VALUES (?, ?, ?)", (ps) -> {
+			this.jdbcOperations.update("INSERT INTO SPRING_SESSION_ATTRIBUTES VALUES (?, ?, ?)", ps -> {
 				ps.setString(1, (String) ReflectionTestUtils.getField(session, "primaryKey"));
 				ps.setString(2, attributeName);
 				lobCreator.setBlobAsBytes(ps, 3, "value2".getBytes());

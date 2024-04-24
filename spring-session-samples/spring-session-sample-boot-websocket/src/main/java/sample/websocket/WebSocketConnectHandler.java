@@ -31,9 +31,9 @@ import org.springframework.web.socket.messaging.SessionConnectEvent;
 
 public class WebSocketConnectHandler<S> implements ApplicationListener<SessionConnectEvent> {
 
-	private ActiveWebSocketUserRepository repository;
+	private final ActiveWebSocketUserRepository repository;
 
-	private SimpMessageSendingOperations messagingTemplate;
+	private final SimpMessageSendingOperations messagingTemplate;
 
 	public WebSocketConnectHandler(SimpMessageSendingOperations messagingTemplate,
 			ActiveWebSocketUserRepository repository) {

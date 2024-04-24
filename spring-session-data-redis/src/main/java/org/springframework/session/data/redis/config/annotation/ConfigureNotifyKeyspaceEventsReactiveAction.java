@@ -53,7 +53,7 @@ public class ConfigureNotifyKeyspaceEventsReactiveAction implements ConfigureRea
 
 	@Override
 	public Mono<Void> configure(ReactiveRedisConnection connection) {
-		return getNotifyOptions(connection).map((notifyOptions) -> {
+		return getNotifyOptions(connection).map(notifyOptions -> {
 			String customizedNotifyOptions = notifyOptions;
 			if (!customizedNotifyOptions.contains("E")) {
 				customizedNotifyOptions += "E";
@@ -67,11 +67,11 @@ public class ConfigureNotifyKeyspaceEventsReactiveAction implements ConfigureRea
 			}
 			return Tuples.of(notifyOptions, customizedNotifyOptions);
 		})
-			.filter((optionsTuple) -> !optionsTuple.getT1().equals(optionsTuple.getT2()))
-			.flatMap((optionsTuple) -> connection.serverCommands()
+			.filter(optionsTuple -> !optionsTuple.getT1().equals(optionsTuple.getT2()))
+			.flatMap(optionsTuple -> connection.serverCommands()
 				.setConfig(CONFIG_NOTIFY_KEYSPACE_EVENTS, optionsTuple.getT2()))
 			.filter("OK"::equals)
-			.doFinally((unused) -> connection.close())
+			.doFinally(unused -> connection.close())
 			.then();
 	}
 
@@ -79,9 +79,9 @@ public class ConfigureNotifyKeyspaceEventsReactiveAction implements ConfigureRea
 		return connection.serverCommands()
 			.getConfig(CONFIG_NOTIFY_KEYSPACE_EVENTS)
 			.filter(Predicate.not(Properties::isEmpty))
-			.map((config) -> config.getProperty(config.stringPropertyNames().iterator().next()))
+			.map(config -> config.getProperty(config.stringPropertyNames().iterator().next()))
 			.onErrorMap(InvalidDataAccessApiUsageException.class,
-					(ex) -> new IllegalStateException("Unable to configure Reactive Redis to keyspace notifications",
+					ex -> new IllegalStateException("Unable to configure Reactive Redis to keyspace notifications",
 							ex));
 	}
 

@@ -479,9 +479,9 @@ public class JdbcIndexedSessionRepository implements
 
 	@Override
 	public JdbcSession findById(final String id) {
-		final JdbcSession session = this.transactionOperations.execute((status) -> {
+		final JdbcSession session = this.transactionOperations.execute(status -> {
 			List<JdbcSession> sessions = JdbcIndexedSessionRepository.this.jdbcOperations.query(
-					JdbcIndexedSessionRepository.this.getSessionQuery, (ps) -> ps.setString(1, id),
+					JdbcIndexedSessionRepository.this.getSessionQuery, ps -> ps.setString(1, id),
 					JdbcIndexedSessionRepository.this.extractor);
 			if (sessions.isEmpty()) {
 				return null;
@@ -502,7 +502,7 @@ public class JdbcIndexedSessionRepository implements
 
 	@Override
 	public void deleteById(final String id) {
-		this.transactionOperations.executeWithoutResult((status) -> JdbcIndexedSessionRepository.this.jdbcOperations
+		this.transactionOperations.executeWithoutResult(status -> JdbcIndexedSessionRepository.this.jdbcOperations
 			.update(JdbcIndexedSessionRepository.this.deleteSessionQuery, id));
 	}
 
@@ -513,9 +513,9 @@ public class JdbcIndexedSessionRepository implements
 		}
 
 		List<JdbcSession> sessions = this.transactionOperations
-			.execute((status) -> JdbcIndexedSessionRepository.this.jdbcOperations.query(
+			.execute(status -> JdbcIndexedSessionRepository.this.jdbcOperations.query(
 					JdbcIndexedSessionRepository.this.listSessionsByPrincipalNameQuery,
-					(ps) -> ps.setString(1, indexValue), JdbcIndexedSessionRepository.this.extractor));
+					ps -> ps.setString(1, indexValue), JdbcIndexedSessionRepository.this.extractor));
 
 		Map<String, JdbcSession> sessionMap = new HashMap<>(sessions.size());
 
@@ -562,7 +562,7 @@ public class JdbcIndexedSessionRepository implements
 			}
 			else {
 				try {
-					this.jdbcOperations.update(this.createSessionAttributeQuery, (ps) -> {
+					this.jdbcOperations.update(this.createSessionAttributeQuery, ps -> {
 						String attributeName = attributeNames.get(0);
 						ps.setString(1, session.primaryKey);
 						ps.setString(2, attributeName);
@@ -605,7 +605,7 @@ public class JdbcIndexedSessionRepository implements
 				});
 			}
 			else {
-				this.jdbcOperations.update(this.updateSessionAttributeQuery, (ps) -> {
+				this.jdbcOperations.update(this.updateSessionAttributeQuery, ps -> {
 					String attributeName = attributeNames.get(0);
 					lobCreator.setBlobAsBytes(ps, 1, serialize(session.getAttribute(attributeName)));
 					ps.setString(2, session.primaryKey);
@@ -635,7 +635,7 @@ public class JdbcIndexedSessionRepository implements
 			});
 		}
 		else {
-			this.jdbcOperations.update(this.deleteSessionAttributeQuery, (ps) -> {
+			this.jdbcOperations.update(this.deleteSessionAttributeQuery, ps -> {
 				String attributeName = attributeNames.get(0);
 				ps.setString(1, session.primaryKey);
 				ps.setString(2, attributeName);
@@ -645,7 +645,7 @@ public class JdbcIndexedSessionRepository implements
 
 	public void cleanUpExpiredSessions() {
 		Integer deletedCount = this.transactionOperations
-			.execute((status) -> JdbcIndexedSessionRepository.this.jdbcOperations
+			.execute(status -> JdbcIndexedSessionRepository.this.jdbcOperations
 				.update(JdbcIndexedSessionRepository.this.deleteSessionsByExpiryTimeQuery, System.currentTimeMillis()));
 
 		if (logger.isDebugEnabled()) {
@@ -707,11 +707,11 @@ public class JdbcIndexedSessionRepository implements
 	}
 
 	private static <T> Supplier<T> value(T value) {
-		return (value != null) ? () -> value : null;
+		return value != null ? () -> value : null;
 	}
 
 	private static <T> Supplier<T> lazily(Supplier<T> supplier) {
-		Supplier<T> lazySupplier = new Supplier<T>() {
+		Supplier<T> lazySupplier = new Supplier<>() {
 
 			private T value;
 
@@ -725,7 +725,7 @@ public class JdbcIndexedSessionRepository implements
 
 		};
 
-		return (supplier != null) ? lazySupplier : null;
+		return supplier != null ? lazySupplier : null;
 	}
 
 	/**
@@ -750,7 +750,7 @@ public class JdbcIndexedSessionRepository implements
 			this.primaryKey = primaryKey;
 			this.isNew = isNew;
 			if (this.isNew || (JdbcIndexedSessionRepository.this.saveMode == SaveMode.ALWAYS)) {
-				getAttributeNames().forEach((attributeName) -> this.delta.put(attributeName, DeltaValue.UPDATED));
+				getAttributeNames().forEach(attributeName -> this.delta.put(attributeName, DeltaValue.UPDATED));
 			}
 		}
 
@@ -802,7 +802,7 @@ public class JdbcIndexedSessionRepository implements
 			if (attributeValue != null
 					&& JdbcIndexedSessionRepository.this.saveMode.equals(SaveMode.ON_GET_ATTRIBUTE)) {
 				this.delta.merge(attributeName, DeltaValue.UPDATED, (oldDeltaValue,
-						deltaValue) -> (oldDeltaValue == DeltaValue.ADDED) ? oldDeltaValue : deltaValue);
+						deltaValue) -> oldDeltaValue == DeltaValue.ADDED ? oldDeltaValue : deltaValue);
 			}
 			return attributeValue;
 		}
@@ -814,24 +814,24 @@ public class JdbcIndexedSessionRepository implements
 
 		@Override
 		public void setAttribute(String attributeName, Object attributeValue) {
-			boolean attributeExists = (this.delegate.getAttribute(attributeName) != null);
-			boolean attributeRemoved = (attributeValue == null);
+			boolean attributeExists = this.delegate.getAttribute(attributeName) != null;
+			boolean attributeRemoved = attributeValue == null;
 			if (!attributeExists && attributeRemoved) {
 				return;
 			}
 			if (attributeExists) {
 				if (attributeRemoved) {
 					this.delta.merge(attributeName, DeltaValue.REMOVED,
-							(oldDeltaValue, deltaValue) -> (oldDeltaValue == DeltaValue.ADDED) ? null : deltaValue);
+							(oldDeltaValue, deltaValue) -> oldDeltaValue == DeltaValue.ADDED ? null : deltaValue);
 				}
 				else {
 					this.delta.merge(attributeName, DeltaValue.UPDATED, (oldDeltaValue,
-							deltaValue) -> (oldDeltaValue == DeltaValue.ADDED) ? oldDeltaValue : deltaValue);
+							deltaValue) -> oldDeltaValue == DeltaValue.ADDED ? oldDeltaValue : deltaValue);
 				}
 			}
 			else {
 				this.delta.merge(attributeName, DeltaValue.ADDED, (oldDeltaValue,
-						deltaValue) -> (oldDeltaValue == DeltaValue.ADDED) ? oldDeltaValue : DeltaValue.UPDATED);
+						deltaValue) -> oldDeltaValue == DeltaValue.ADDED ? oldDeltaValue : DeltaValue.UPDATED);
 			}
 			this.delegate.setAttribute(attributeName, value(attributeValue));
 			if (PRINCIPAL_NAME_INDEX_NAME.equals(attributeName) || SPRING_SECURITY_CONTEXT.equals(attributeName)) {
@@ -887,11 +887,11 @@ public class JdbcIndexedSessionRepository implements
 
 		private void save() {
 			if (this.isNew) {
-				JdbcIndexedSessionRepository.this.transactionOperations.executeWithoutResult((status) -> {
+				JdbcIndexedSessionRepository.this.transactionOperations.executeWithoutResult(status -> {
 					Map<String, String> indexes = JdbcIndexedSessionRepository.this.indexResolver
 						.resolveIndexesFor(JdbcSession.this);
 					JdbcIndexedSessionRepository.this.jdbcOperations
-						.update(JdbcIndexedSessionRepository.this.createSessionQuery, (ps) -> {
+						.update(JdbcIndexedSessionRepository.this.createSessionQuery, ps -> {
 							ps.setString(1, JdbcSession.this.primaryKey);
 							ps.setString(2, getId());
 							ps.setLong(3, getCreationTime().toEpochMilli());
@@ -907,12 +907,12 @@ public class JdbcIndexedSessionRepository implements
 				});
 			}
 			else {
-				JdbcIndexedSessionRepository.this.transactionOperations.executeWithoutResult((status) -> {
+				JdbcIndexedSessionRepository.this.transactionOperations.executeWithoutResult(status -> {
 					if (JdbcSession.this.changed) {
 						Map<String, String> indexes = JdbcIndexedSessionRepository.this.indexResolver
 							.resolveIndexesFor(JdbcSession.this);
 						JdbcIndexedSessionRepository.this.jdbcOperations
-							.update(JdbcIndexedSessionRepository.this.updateSessionQuery, (ps) -> {
+							.update(JdbcIndexedSessionRepository.this.updateSessionQuery, ps -> {
 								ps.setString(1, getId());
 								ps.setLong(2, getLastAccessedTime().toEpochMilli());
 								ps.setInt(3, (int) getMaxInactiveInterval().getSeconds());
@@ -923,7 +923,7 @@ public class JdbcIndexedSessionRepository implements
 					}
 					List<String> addedAttributeNames = JdbcSession.this.delta.entrySet()
 						.stream()
-						.filter((entry) -> entry.getValue() == DeltaValue.ADDED)
+						.filter(entry -> entry.getValue() == DeltaValue.ADDED)
 						.map(Map.Entry::getKey)
 						.collect(Collectors.toList());
 					if (!addedAttributeNames.isEmpty()) {
@@ -931,7 +931,7 @@ public class JdbcIndexedSessionRepository implements
 					}
 					List<String> updatedAttributeNames = JdbcSession.this.delta.entrySet()
 						.stream()
-						.filter((entry) -> entry.getValue() == DeltaValue.UPDATED)
+						.filter(entry -> entry.getValue() == DeltaValue.UPDATED)
 						.map(Map.Entry::getKey)
 						.collect(Collectors.toList());
 					if (!updatedAttributeNames.isEmpty()) {
@@ -939,7 +939,7 @@ public class JdbcIndexedSessionRepository implements
 					}
 					List<String> removedAttributeNames = JdbcSession.this.delta.entrySet()
 						.stream()
-						.filter((entry) -> entry.getValue() == DeltaValue.REMOVED)
+						.filter(entry -> entry.getValue() == DeltaValue.REMOVED)
 						.map(Map.Entry::getKey)
 						.collect(Collectors.toList());
 					if (!removedAttributeNames.isEmpty()) {
@@ -960,7 +960,7 @@ public class JdbcIndexedSessionRepository implements
 			while (rs.next()) {
 				String id = rs.getString("SESSION_ID");
 				JdbcSession session;
-				if (sessions.size() > 0 && getLast(sessions).getId().equals(id)) {
+				if (!sessions.isEmpty() && getLast(sessions).getId().equals(id)) {
 					session = getLast(sessions);
 				}
 				else {

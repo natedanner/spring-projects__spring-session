@@ -59,7 +59,7 @@ final class ReactiveRedisSessionIndexer {
 	}
 
 	Mono<Void> update(RedisSession redisSession) {
-		return getIndexes(redisSession.getId()).map((originalIndexes) -> {
+		return getIndexes(redisSession.getId()).map(originalIndexes -> {
 			Map<String, String> indexes = this.indexResolver.resolveIndexesFor(redisSession);
 			Map<String, String> indexToDelete = new HashMap<>();
 			Map<String, String> indexToAdd = new HashMap<>();
@@ -77,24 +77,24 @@ final class ReactiveRedisSessionIndexer {
 				indexToDelete.putAll(originalIndexes);
 			}
 			return Tuples.of(indexToDelete, indexToAdd);
-		}).flatMap((indexes) -> updateIndexes(indexes.getT1(), indexes.getT2(), redisSession.getId()));
+		}).flatMap(indexes -> updateIndexes(indexes.getT1(), indexes.getT2(), redisSession.getId()));
 	}
 
 	private Mono<Void> updateIndexes(Map<String, String> indexToDelete, Map<String, String> indexToAdd,
 			String sessionId) {
 		// @formatter:off
 		return Flux.fromIterable(indexToDelete.entrySet())
-			.flatMap((entry) -> {
+			.flatMap(entry -> {
 				String indexKey = getIndexKey(entry.getKey(), entry.getValue());
 				return removeSessionFromIndex(indexKey, sessionId).thenReturn(indexKey);
 			})
-			.flatMap((indexKey) -> this.sessionRedisOperations.opsForSet().remove(getSessionIndexesKey(sessionId), indexKey))
+			.flatMap(indexKey -> this.sessionRedisOperations.opsForSet().remove(getSessionIndexesKey(sessionId), indexKey))
 			.thenMany(Flux.fromIterable(indexToAdd.entrySet()))
-			.flatMap((entry) -> {
+			.flatMap(entry -> {
 				String indexKey = getIndexKey(entry.getKey(), entry.getValue());
 				return this.sessionRedisOperations.opsForSet().add(indexKey, sessionId).thenReturn(indexKey);
 			})
-			.flatMap((indexKey) -> this.sessionRedisOperations.opsForSet().add(getSessionIndexesKey(sessionId), indexKey))
+			.flatMap(indexKey -> this.sessionRedisOperations.opsForSet().add(getSessionIndexesKey(sessionId), indexKey))
 			.then();
 		// @formatter:on
 	}
@@ -103,7 +103,7 @@ final class ReactiveRedisSessionIndexer {
 		String sessionIndexesKey = getSessionIndexesKey(sessionId);
 		return this.sessionRedisOperations.opsForSet()
 			.members(sessionIndexesKey)
-			.flatMap((indexKey) -> removeSessionFromIndex((String) indexKey, sessionId))
+			.flatMap(indexKey -> removeSessionFromIndex((String) indexKey, sessionId))
 			.then(this.sessionRedisOperations.delete(sessionIndexesKey))
 			.then();
 	}
@@ -117,8 +117,8 @@ final class ReactiveRedisSessionIndexer {
 		return this.sessionRedisOperations.opsForSet()
 			.members(sessionIndexesKey)
 			.cast(String.class)
-			.collectMap((indexKey) -> indexKey.substring(this.indexKeyPrefix.length()).split(":")[0],
-					(indexKey) -> indexKey.substring(this.indexKeyPrefix.length()).split(":")[1]);
+			.collectMap(indexKey -> indexKey.substring(this.indexKeyPrefix.length()).split(":")[0],
+					indexKey -> indexKey.substring(this.indexKeyPrefix.length()).split(":")[1]);
 	}
 
 	Flux<String> getSessionIds(String indexName, String indexValue) {

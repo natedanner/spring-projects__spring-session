@@ -36,14 +36,14 @@ public class SecurityConfig {
 	@Bean
 	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		return http
-			.authorizeHttpRequests((authorize) -> authorize
+			.authorizeHttpRequests(authorize -> authorize
 				.anyRequest().authenticated()
 			)
-			.requestCache((requestCache) -> requestCache
+			.requestCache(requestCache -> requestCache
 				.requestCache(new NullRequestCache())
 			)
 			.httpBasic(Customizer.withDefaults())
-			.sessionManagement((sessionManagement) -> sessionManagement
+			.sessionManagement(sessionManagement -> sessionManagement
 				.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
 			.build();
 	}

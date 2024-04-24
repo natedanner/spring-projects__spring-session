@@ -142,7 +142,7 @@ class ReactiveRedisIndexedSessionRepositoryConfigurationITests {
 
 		@Bean
 		ReactiveSessionRepositoryCustomizer<ReactiveRedisIndexedSessionRepository> customizer() {
-			return (sessionRepository) -> sessionRepository.setCleanupInterval(Duration.ofSeconds(1));
+			return sessionRepository -> sessionRepository.setCleanupInterval(Duration.ofSeconds(1));
 		}
 
 	}
@@ -176,7 +176,7 @@ class ReactiveRedisIndexedSessionRepositoryConfigurationITests {
 
 		@Bean
 		ConfigureReactiveRedisAction configureReactiveRedisAction() {
-			return (connection) -> connection.serverCommands().setConfig("notify-keyspace-events", "").then();
+			return connection -> connection.serverCommands().setConfig("notify-keyspace-events", "").then();
 		}
 
 	}

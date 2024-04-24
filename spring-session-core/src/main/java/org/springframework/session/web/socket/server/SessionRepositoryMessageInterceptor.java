@@ -111,7 +111,7 @@ public final class SessionRepositoryMessageInterceptor<S extends Session>
 			return message;
 		}
 		Map<String, Object> sessionHeaders = SimpMessageHeaderAccessor.getSessionAttributes(message.getHeaders());
-		String sessionId = (sessionHeaders != null) ? (String) sessionHeaders.get(SPRING_SESSION_ID_ATTR_NAME) : null;
+		String sessionId = sessionHeaders != null ? (String) sessionHeaders.get(SPRING_SESSION_ID_ATTR_NAME) : null;
 		if (sessionId != null) {
 			S session = this.sessionRepository.findById(sessionId);
 			if (session != null) {

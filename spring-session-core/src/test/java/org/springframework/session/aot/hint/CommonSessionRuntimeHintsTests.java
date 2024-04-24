@@ -55,7 +55,7 @@ class CommonSessionRuntimeHintsTests {
 		boolean match = SpringFactoriesLoader.forResourceLocation("META-INF/spring/aot.factories")
 			.load(RuntimeHintsRegistrar.class)
 			.stream()
-			.anyMatch((registrar) -> registrar instanceof CommonSessionRuntimeHints);
+			.anyMatch(CommonSessionRuntimeHints.class::isInstance);
 		assertThat(match).isTrue();
 	}
 

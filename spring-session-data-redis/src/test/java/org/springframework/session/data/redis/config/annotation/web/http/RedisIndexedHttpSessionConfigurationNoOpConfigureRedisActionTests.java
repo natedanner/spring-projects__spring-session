@@ -61,7 +61,7 @@ class RedisIndexedHttpSessionConfigurationNoOpConfigureRedisActionTests {
 			RedisConnection connection = mock(RedisConnection.class);
 			given(redisConnectionFactory.getConnection()).willReturn(connection);
 
-			willAnswer((it) -> {
+			willAnswer(it -> {
 				SubscriptionListener listener = it.getArgument(0);
 				listener.onPatternSubscribed(it.getArgument(1), 0);
 				listener.onChannelSubscribed("__keyevent@0__:del".getBytes(), 0);

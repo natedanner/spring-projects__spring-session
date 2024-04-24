@@ -56,11 +56,11 @@ class JdbcSchemaUtilsTests {
 	}
 
 	private static Stream<Resource> getCreateSchemaFiles() throws IOException {
-		return getSchemaFiles().filter((resource) -> !resource.getFilename().contains("drop"));
+		return getSchemaFiles().filter(resource -> !resource.getFilename().contains("drop"));
 	}
 
 	private static Stream<Resource> getDropSchemaFiles() throws IOException {
-		return getSchemaFiles().filter((resource) -> resource.getFilename().contains("drop"));
+		return getSchemaFiles().filter(resource -> resource.getFilename().contains("drop"));
 	}
 
 	private static Stream<Resource> getSchemaFiles() throws IOException {

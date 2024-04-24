@@ -68,7 +68,7 @@ class ReactiveRedisSessionRepositoryKeyMissITests extends AbstractRedisITests {
 
 		ReactiveHashOperations<String, Object, Object> opsForHash = spy(this.spyOperations.opsForHash());
 		given(this.spyOperations.opsForHash()).willReturn(opsForHash);
-		willAnswer((invocation) -> this.sessionRepository.deleteById(session.getId())
+		willAnswer(invocation -> this.sessionRepository.deleteById(session.getId())
 			.then((Mono<Void>) invocation.callRealMethod())).given(opsForHash).putAll(any(), any());
 
 		this.sessionRepository.save(session).block();
@@ -85,7 +85,7 @@ class ReactiveRedisSessionRepositoryKeyMissITests extends AbstractRedisITests {
 
 		ReactiveHashOperations<String, Object, Object> opsForHash = spy(this.spyOperations.opsForHash());
 		given(this.spyOperations.opsForHash()).willReturn(opsForHash);
-		willAnswer((invocation) -> this.sessionRepository.deleteById(session.getId())
+		willAnswer(invocation -> this.sessionRepository.deleteById(session.getId())
 			.then((Mono<Void>) invocation.callRealMethod())).given(opsForHash).putAll(any(), any());
 
 		this.sessionRepository.save(session).block();
@@ -122,7 +122,7 @@ class ReactiveRedisSessionRepositoryKeyMissITests extends AbstractRedisITests {
 
 		@Bean
 		ReactiveSessionRepositoryCustomizer<ReactiveRedisSessionRepository> redisSessionRepositoryCustomizer() {
-			return (redisSessionRepository) -> redisSessionRepository
+			return redisSessionRepository -> redisSessionRepository
 				.setRedisSessionMapper(new SafeRedisSessionMapper(redisSessionRepository));
 		}
 
@@ -142,7 +142,7 @@ class ReactiveRedisSessionRepositoryKeyMissITests extends AbstractRedisITests {
 		public Mono<MapSession> apply(String sessionId, Map<String, Object> map) {
 			return Mono.fromSupplier(() -> this.delegate.apply(sessionId, map))
 				.onErrorResume(IllegalStateException.class,
-						(ex) -> this.sessionRepository.deleteById(sessionId).then(Mono.empty()));
+						ex -> this.sessionRepository.deleteById(sessionId).then(Mono.empty()));
 		}
 
 	}

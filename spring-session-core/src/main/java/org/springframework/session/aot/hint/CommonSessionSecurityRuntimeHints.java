@@ -57,8 +57,8 @@ class CommonSessionSecurityRuntimeHints implements RuntimeHintsRegistrar {
 				TypeReference
 					.of("org.springframework.security.web.authentication.rememberme.RememberMeAuthenticationException"),
 				TypeReference.of("org.springframework.security.core.userdetails.User$AuthorityComparator"))
-			.forEach((type) -> hints.serialization()
-				.registerType(type, (hint) -> hint.onReachableType(
+			.forEach(type -> hints.serialization()
+				.registerType(type, hint -> hint.onReachableType(
 						TypeReference.of("org.springframework.security.core.context.SecurityContextImpl"))));
 	}
 
@@ -68,8 +68,8 @@ class CommonSessionSecurityRuntimeHints implements RuntimeHintsRegistrar {
 				TypeReference
 					.of("org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken"),
 				TypeReference.of("org.springframework.security.oauth2.core.OAuth2AuthenticationException"))
-			.forEach((type) -> hints.serialization()
-				.registerType(type, (hint) -> hint.onReachableType(TypeReference
+			.forEach(type -> hints.serialization()
+				.registerType(type, hint -> hint.onReachableType(TypeReference
 					.of("org.springframework.security.oauth2.server.resource.BearerTokenAuthenticationToken"))));
 	}
 
@@ -81,8 +81,8 @@ class CommonSessionSecurityRuntimeHints implements RuntimeHintsRegistrar {
 				TypeReference
 					.of("org.springframework.security.oauth2.client.authentication.OAuth2AuthorizationCodeAuthenticationToken"),
 				TypeReference.of("org.springframework.security.oauth2.core.OAuth2AuthenticationException"))
-			.forEach((type) -> hints.serialization()
-				.registerType(type, (hint) -> hint.onReachableType(TypeReference
+			.forEach(type -> hints.serialization()
+				.registerType(type, hint -> hint.onReachableType(TypeReference
 					.of("org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken"))));
 	}
 

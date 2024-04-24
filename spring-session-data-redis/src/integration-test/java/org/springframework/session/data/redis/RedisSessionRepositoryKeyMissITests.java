@@ -67,7 +67,7 @@ class RedisSessionRepositoryKeyMissITests extends AbstractRedisITests {
 
 		HashOperations<String, Object, Object> opsForHash = spy(this.spyOperations.opsForHash());
 		given(this.spyOperations.opsForHash()).willReturn(opsForHash);
-		willAnswer((invocation) -> {
+		willAnswer(invocation -> {
 			this.sessionRepository.deleteById(session.getId());
 			return invocation.callRealMethod();
 		}).given(opsForHash).putAll(any(), any());
@@ -86,7 +86,7 @@ class RedisSessionRepositoryKeyMissITests extends AbstractRedisITests {
 
 		HashOperations<String, Object, Object> opsForHash = spy(this.spyOperations.opsForHash());
 		given(this.spyOperations.opsForHash()).willReturn(opsForHash);
-		willAnswer((invocation) -> {
+		willAnswer(invocation -> {
 			this.sessionRepository.deleteById(session.getId());
 			return invocation.callRealMethod();
 		}).given(opsForHash).putAll(any(), any());
@@ -125,7 +125,7 @@ class RedisSessionRepositoryKeyMissITests extends AbstractRedisITests {
 
 		@Bean
 		SessionRepositoryCustomizer<RedisSessionRepository> redisSessionRepositoryCustomizer() {
-			return (redisSessionRepository) -> redisSessionRepository
+			return redisSessionRepository -> redisSessionRepository
 				.setRedisSessionMapper(new SafeRedisSessionMapper(redisSessionRepository));
 		}
 

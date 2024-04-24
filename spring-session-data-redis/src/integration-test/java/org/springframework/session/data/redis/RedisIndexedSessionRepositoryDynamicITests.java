@@ -68,7 +68,7 @@ class RedisIndexedSessionRepositoryDynamicITests extends AbstractRedisITests {
 
 		BoundHashOperations<String, Object, Object> opsForHash = spy(this.spyOperations.boundHashOps(anyString()));
 		given(this.spyOperations.boundHashOps(anyString())).willReturn(opsForHash);
-		willAnswer((invocation) -> {
+		willAnswer(invocation -> {
 			this.sessionRepository.deleteById(session.getId());
 			return invocation.callRealMethod();
 		}).given(opsForHash).putAll(any());
@@ -87,7 +87,7 @@ class RedisIndexedSessionRepositoryDynamicITests extends AbstractRedisITests {
 
 		BoundHashOperations<String, Object, Object> opsForHash = spy(this.spyOperations.boundHashOps(anyString()));
 		given(this.spyOperations.boundHashOps(anyString())).willReturn(opsForHash);
-		willAnswer((invocation) -> {
+		willAnswer(invocation -> {
 			this.sessionRepository.deleteById(session.getId());
 			return invocation.callRealMethod();
 		}).given(opsForHash).putAll(any());
@@ -126,7 +126,7 @@ class RedisIndexedSessionRepositoryDynamicITests extends AbstractRedisITests {
 
 		@Bean
 		SessionRepositoryCustomizer<RedisIndexedSessionRepository> redisSessionRepositoryCustomizer() {
-			return (redisSessionRepository) -> redisSessionRepository
+			return redisSessionRepository -> redisSessionRepository
 				.setRedisSessionMapper(new SafeRedisSessionMapper(redisSessionRepository.getSessionRedisOperations()));
 		}
 

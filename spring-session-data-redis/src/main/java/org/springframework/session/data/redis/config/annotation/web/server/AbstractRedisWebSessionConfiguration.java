@@ -126,7 +126,7 @@ public abstract class AbstractRedisWebSessionConfiguration<T extends ReactiveSes
 
 	protected ReactiveRedisTemplate<String, Object> createReactiveRedisTemplate() {
 		RedisSerializer<String> keySerializer = RedisSerializer.string();
-		RedisSerializer<Object> defaultSerializer = (this.defaultRedisSerializer != null) ? this.defaultRedisSerializer
+		RedisSerializer<Object> defaultSerializer = this.defaultRedisSerializer != null ? this.defaultRedisSerializer
 				: new JdkSerializationRedisSerializer();
 		RedisSerializationContext<String, Object> serializationContext = RedisSerializationContext
 			.<String, Object>newSerializationContext(defaultSerializer)

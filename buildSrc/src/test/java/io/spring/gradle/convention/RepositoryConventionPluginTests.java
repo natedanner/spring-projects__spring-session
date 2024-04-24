@@ -32,7 +32,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class RepositoryConventionPluginTests {
 
-	private Project project = ProjectBuilder.builder().build();
+	private final Project project = ProjectBuilder.builder().build();
 
 	@BeforeEach
 	public void setUp() {

@@ -34,6 +34,6 @@ public interface ConfigureReactiveRedisAction {
 	/**
 	 * An implementation of {@link ConfigureReactiveRedisAction} that does nothing.
 	 */
-	ConfigureReactiveRedisAction NO_OP = (connection) -> Mono.empty();
+	ConfigureReactiveRedisAction NO_OP = connection -> Mono.empty();
 
 }
